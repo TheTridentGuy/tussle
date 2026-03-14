@@ -39,8 +39,16 @@
 ### Deprecated
 ### Removed
 ### Fixed
+
+* `image-size-ratio=0` causing a crash due to a zero-size allocation
+  ([#739][739]).
+
+[739]: https://codeberg.org/dnkl/fuzzel/issues/739
+
 ### Security
 ### Contributors
+
+* markstos
 
 
 ## 1.14.1

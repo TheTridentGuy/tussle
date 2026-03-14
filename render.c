@@ -1668,6 +1668,7 @@ render_one_match_entry(struct render *render, const struct matches *matches,
         LOG_DBG("img_y=%f, list_end=%f", img_y, list_end);
 
         if (render_icons &&
+            size > 0 &&
             match->application->icon.type == ICON_SVG &&
             img_y > list_end + render->row_height)
         {
