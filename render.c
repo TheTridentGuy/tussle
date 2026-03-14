@@ -2151,18 +2151,13 @@ ssize_t
 render_get_row_num(const struct render *render, int width, int x, int y,
                    const struct matches *matches)
 {
-    const int y_margin = render->y_margin;
-    const int inner_pad = render->inner_pad;
     const int border_size = render->border_size;
     const int row_height = render->row_height;
-    const int message_height = render->message_height;
 
-    const int min_x = render->border_size + render->x_margin - render->x_margin / 3;
+    const int min_x = border_size + render->x_margin - render->x_margin / 3;
     const int max_x = width - (min_x);
 
-    const int first_row = message_height + border_size + y_margin +
-        (render->conf->hide_prompt ? 0 : row_height) +
-        (render->conf->hide_prompt ? 0 : inner_pad);
+    const int first_row = first_row_y(render);
 
     const size_t match_count = matches_get_count(matches);
     const size_t last_row = first_row + match_count * row_height;
