@@ -623,6 +623,19 @@ strip_trailing_spaces:
 
 }
 
+/*
+ * Returns the x-coordinate of the left edge of the row background area.
+ * The background extends slightly past the text content edge (border + x_margin)
+ * by sel_margin (= x_margin / 3) on each side, so the selection highlight
+ * has a small gap from the window border while bleeding into the margin.
+ */
+static int
+row_bg_x(const struct render *render)
+{
+    const int sel_margin = render->x_margin / 3;
+    return render->border_size + render->x_margin - sel_margin;
+}
+
 void
 render_message(struct render *render, struct buffer *buf)
 {
@@ -649,9 +662,9 @@ render_message(struct render *render, struct buffer *buf)
     pixman_image_fill_rectangles(
         PIXMAN_OP_SRC, buf->pix[0], &bg, 1,
         &(pixman_rectangle16_t){
-            render->border_size + render->x_margin - render->x_margin / 3,
+            row_bg_x(render),
             render->border_size + render->y_margin,
-            buf->width - 2 * (render->border_size + render->x_margin - render->x_margin / 3),
+            buf->width - 2 * row_bg_x(render),
             render->message_height});
 
     struct fcft_text_run *message_run = render->message_text_run;
@@ -782,9 +795,9 @@ render_prompt(struct render *render, struct buffer *buf,
     pixman_image_fill_rectangles(
         PIXMAN_OP_SRC, buf->pix[0], &bg, 1,
         &(pixman_rectangle16_t){
-            render->border_size + render->x_margin - render->x_margin / 3,
+            row_bg_x(render),
             render->border_size + render->y_margin + render->message_height,
-            buf->width - 2 * (render->border_size + render->x_margin - render->x_margin / 3),
+            buf->width - 2 * row_bg_x(render),
             render->row_height});
 
 #if 0
@@ -1589,11 +1602,9 @@ render_match_entry_background(const struct render *render,
 {
     pixman_color_t bg = render->pix_background_color;
 
-    const int sel_margin = render->x_margin / 3;
-
-    const int x = render->border_size + render->x_margin - sel_margin;
+    const int x = row_bg_x(render);
     const int y = first_row_y(render) + idx * render->row_height;
-    const int w = width - 2 * (render->border_size + render->x_margin - sel_margin);
+    const int w = width - 2 * row_bg_x(render);
     const int h = row_count * render->row_height;
 
     pixman_image_fill_rectangles(
@@ -1606,11 +1617,9 @@ render_selected_match_entry_background(struct render *render,
 {
     pixman_color_t bg = render->pix_selection_color;
 
-    const int sel_margin = render->x_margin / 3;
-
-    const int x = render->border_size + render->x_margin - sel_margin;
+    const int x = row_bg_x(render);
     const int y = first_row_y(render) + idx * render->row_height;
-    const int w = width - 2 * (render->border_size + render->x_margin - sel_margin);
+    const int w = width - 2 * row_bg_x(render);
     const int h = 1 * render->row_height;
 
     // limit radius to half of height, any larger and it causes weird shapes
@@ -2151,10 +2160,9 @@ ssize_t
 render_get_row_num(const struct render *render, int width, int x, int y,
                    const struct matches *matches)
 {
-    const int border_size = render->border_size;
     const int row_height = render->row_height;
 
-    const int min_x = border_size + render->x_margin - render->x_margin / 3;
+    const int min_x = row_bg_x(render);
     const int max_x = width - (min_x);
 
     const int first_row = first_row_y(render);
