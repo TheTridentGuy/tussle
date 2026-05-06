@@ -1,6 +1,6 @@
-#if defined(FUZZEL_ENABLE_PNG_LIBPNG)
+#if defined(TUSSLE_ENABLE_PNG_LIBPNG)
 
-#include "png-fuzzel.h"
+#include "png-tussle.h"
 
 #include <stdlib.h>
 #include <stdio.h>
@@ -219,4 +219,4 @@ err:
     return pix;
 }
 
-#endif /* FUZZEL_ENABLE_PNG_LIBPNG */
+#endif /* TUSSLE_ENABLE_PNG_LIBPNG */

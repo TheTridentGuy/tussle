@@ -14,7 +14,7 @@ My personal fork of [fuzzel](https://codeberg.org/dnkl/fuzzel)
 * librsvg (optional, for enhanced SVG icon support)
 * [fcft](https://codeberg.org/dnkl/fcft) [^1]
 
-Fuzzel uses the builtin nanosvg backend to render SVG icons by
+Tussle uses the builtin nanosvg backend to render SVG icons by
 default. Since nanosvg is somewhat limited, we also offer a librsvg
 backend for SVG icons. Note that librsvg also requires cairo.
 
@@ -53,7 +53,7 @@ specific png and/or svg backend. Note that _nanosvg_ is builtin
 (i.e. it needs to external dependencies).
 
 `-Denable-cairo` can be used to force-enable or force-disable cairo support.
-When disabled, fuzzel will not support SVGs using the _librsvg_ backend.
+When disabled, tussle will not support SVGs using the _librsvg_ backend.
 
 Three, build it:
 ```sh
@@ -62,7 +62,7 @@ ninja
 
 You can now run it directly from the build directory:
 ```sh
-./fuzzel
+./tussle
 ```
 
 Use command line arguments to configure the look-and-feel:
@@ -78,7 +78,7 @@ ninja install
 For more detailed configuration information, see the man pages:
 ```sh
 man fuzzel
-man fuzzel.ini
+man tussle.ini
 ```
 
 ## License

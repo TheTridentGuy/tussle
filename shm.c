@@ -122,7 +122,7 @@ buffer_destroy_dont_close(struct buffer *buf)
     }
     free(buf->pix);
 
-#if defined(FUZZEL_ENABLE_CAIRO)
+#if defined(TUSSLE_ENABLE_CAIRO)
     if (buf->cairo != NULL) {
         for (size_t i = 0; i < buf->pix_instances; i++) {
             if (buf->cairo[i] != NULL) {
@@ -276,7 +276,7 @@ instantiate_offset(struct buffer_private *buf, off_t new_offset)
     struct wl_buffer *wl_buf = NULL;
     pixman_image_t **pix = xcalloc(buf->public.pix_instances, sizeof(pix[0]));
 
-#if defined(FUZZEL_ENABLE_CAIRO)
+#if defined(TUSSLE_ENABLE_CAIRO)
     cairo_t **cairos = xcalloc(buf->public.pix_instances, sizeof(cairos[0]));
     cairo_surface_t **cairo_surfs =
         xcalloc(buf->public.pix_instances, sizeof(cairo_surfs[0]));
@@ -310,7 +310,7 @@ instantiate_offset(struct buffer_private *buf, off_t new_offset)
             goto err;
         }
 
-#if defined(FUZZEL_ENABLE_CAIRO)
+#if defined(TUSSLE_ENABLE_CAIRO)
         cairo_surfs[i] = cairo_image_surface_create_for_data(
             mmapped, buf->with_alpha ? CAIRO_FORMAT_ARGB32 : CAIRO_FORMAT_RGB24,
             buf->public.width, buf->public.height, buf->public.stride);
@@ -336,7 +336,7 @@ instantiate_offset(struct buffer_private *buf, off_t new_offset)
     buf->public.pix = pix;
     buf->offset = new_offset;
 
-#if defined(FUZZEL_ENABLE_CAIRO)
+#if defined(TUSSLE_ENABLE_CAIRO)
     buf->public.cairo = cairos;
     free(cairo_surfs);
 #endif
@@ -353,7 +353,7 @@ err:
     }
     free(pix);
 
-#if defined(FUZZEL_ENABLE_CAIRO)
+#if defined(TUSSLE_ENABLE_CAIRO)
     if (cairos != NULL) {
         for (size_t i = 0; i < buf->public.pix_instances; i++) {
             if (cairos[i] != NULL)
@@ -424,19 +424,19 @@ get_new_buffers(struct buffer_chain *chain, size_t count,
      */
     errno = 0;
     pool_fd = memfd_create(
-        "fuzzel-wayland-shm-buffer-pool",
+        "tussle-wayland-shm-buffer-pool",
         MFD_CLOEXEC | MFD_ALLOW_SEALING | MFD_NOEXEC_SEAL);
 
     if (pool_fd < 0 && errno == EINVAL && MFD_NOEXEC_SEAL != 0) {
         pool_fd = memfd_create(
-            "fuzzel-wayland-shm-buffer-pool", MFD_CLOEXEC | MFD_ALLOW_SEALING);
+            "tussle-wayland-shm-buffer-pool", MFD_CLOEXEC | MFD_ALLOW_SEALING);
     }
 
 #elif defined(__FreeBSD__)
     // memfd_create on FreeBSD 13 is SHM_ANON without sealing support
     pool_fd = shm_open(SHM_ANON, O_RDWR | O_CLOEXEC, 0600);
 #else
-    char name[] = "/tmp/fuzzel-wayland-shm-buffer-pool-XXXXXX";
+    char name[] = "/tmp/tussle-wayland-shm-buffer-pool-XXXXXX";
     pool_fd = mkostemp(name, O_CLOEXEC);
     unlink(name);
 #endif

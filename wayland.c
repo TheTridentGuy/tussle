@@ -2614,7 +2614,7 @@ wayl_refresh(struct wayland *wayl)
 skip_list:
     matches_unlock(wayl->matches);
 
-#if defined(FUZZEL_ENABLE_CAIRO)
+#if defined(TUSSLE_ENABLE_CAIRO)
     for (size_t i = 0; i < buf->pix_instances; i++)
         cairo_surface_flush(cairo_get_target(buf->cairo[0]));
 #endif
@@ -2936,7 +2936,7 @@ wayl_init(const struct config *conf, struct fdm *fdm,
     }
 
     if (conf->gamma_correct) {
-#if defined(FUZZEL_ENABLE_CAIRO)
+#if defined(TUSSLE_ENABLE_CAIRO)
         LOG_WARN("gamma-correct-blending: disabling; not supported in cairo-enabled builds");
 #else
         if (wayl->color_management.img_description != NULL) {
@@ -3184,7 +3184,7 @@ wayl_clipboard_done(struct wayland *wayl)
 bool
 wayl_do_linear_blending(const struct wayland *wayl)
 {
-#if !defined(FUZZEL_ENABLE_CAIRO)
+#if !defined(TUSSLE_ENABLE_CAIRO)
     return wayl->conf->gamma_correct &&
            wayl->color_management.img_description != NULL;
 #else

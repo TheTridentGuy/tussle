@@ -12,19 +12,19 @@
 #include <sys/stat.h>
 #include <fcntl.h>
 
-#if defined(FUZZEL_ENABLE_PNG_LIBPNG)
- #include "png-fuzzel.h"
+#if defined(TUSSLE_ENABLE_PNG_LIBPNG)
+ #include "png-tussle.h"
 #endif
 
-#if defined(FUZZEL_ENABLE_SVG_LIBRSVG)
+#if defined(TUSSLE_ENABLE_SVG_LIBRSVG)
  #include <librsvg/rsvg.h>
 #endif
 
-#if defined(FUZZEL_ENABLE_SVG_NANOSVG)
+#if defined(TUSSLE_ENABLE_SVG_NANOSVG)
  #include <nanosvg/nanosvg.h>
 #endif
 
-#if defined(FUZZEL_ENABLE_SVG_RESVG)
+#if defined(TUSSLE_ENABLE_SVG_RESVG)
  #include <resvg.h>
 #endif
 

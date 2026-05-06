@@ -9,7 +9,7 @@
 
 #include <tllist.h>
 
-#if defined(FUZZEL_ENABLE_CAIRO)
+#if defined(TUSSLE_ENABLE_CAIRO)
 #include <cairo.h>
 #endif
 
@@ -24,7 +24,7 @@ struct buffer {
 
     struct wl_buffer *wl_buf;
     pixman_image_t **pix;
-#if defined(FUZZEL_ENABLE_CAIRO)
+#if defined(TUSSLE_ENABLE_CAIRO)
     cairo_t **cairo;
 #endif
     size_t pix_instances;

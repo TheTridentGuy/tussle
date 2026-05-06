@@ -172,8 +172,8 @@ application_execute(const struct application *app, const struct prompt *prompt,
 
       if (id != NULL) {
           setenv("DESKTOP_ENTRY_ID", id, 1);
-          /* Keep FUZZEL_DESKTOP_FILE_ID for backward compatibility */
-          setenv("FUZZEL_DESKTOP_FILE_ID", id, 1);
+          /* Keep TUSSLE_DESKTOP_FILE_ID for backward compatibility */
+          setenv("TUSSLE_DESKTOP_FILE_ID", id, 1);
       } else {
           LOG_WARN("No Desktop File ID, not setting DESKTOP_ENTRY_ID");
       }
@@ -428,7 +428,7 @@ applications_destroy(struct application_list *apps)
 
         case ICON_PNG:
             if (app->icon.png != NULL) {
-#if defined(FUZZEL_ENABLE_PNG_LIBPNG)
+#if defined(TUSSLE_ENABLE_PNG_LIBPNG)
                 free(pixman_image_get_data(app->icon.png));
                 pixman_image_unref(app->icon.png);
 #endif
@@ -437,9 +437,9 @@ applications_destroy(struct application_list *apps)
 
         case ICON_SVG:
             if (app->icon.svg != NULL) {
-#if defined(FUZZEL_ENABLE_SVG_LIBRSVG)
+#if defined(TUSSLE_ENABLE_SVG_LIBRSVG)
                 g_object_unref(app->icon.svg);
-#elif defined(FUZZEL_ENABLE_SVG_NANOSVG)
+#elif defined(TUSSLE_ENABLE_SVG_NANOSVG)
                 nsvgDelete(app->icon.svg);
 #endif
             }

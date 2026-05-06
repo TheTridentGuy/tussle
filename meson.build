@@ -1,5 +1,5 @@
-project('fuzzel', 'c',
-        version: '1.14.1',
+project('tussle', 'c',
+        version: '1.0.0',
         license: 'MIT',
         meson_version: '>=0.58.0',
         default_options: [
@@ -86,7 +86,7 @@ endif
 
 if get_option('png-backend') == 'libpng'
   libpng = dependency('libpng')
-  add_project_arguments('-DFUZZEL_ENABLE_PNG_LIBPNG=1', language: 'c')
+  add_project_arguments('-DTUSSLE_ENABLE_PNG_LIBPNG=1', language: 'c')
 else
   libpng = declare_dependency()
 endif
@@ -96,7 +96,7 @@ if cairo.found() and get_option('svg-backend') == 'librsvg'
   nanosvg = declare_dependency()
   resvg = declare_dependency()
   svg_backend = 'librsvg'
-  add_project_arguments('-DFUZZEL_ENABLE_SVG_LIBRSVG=1', language: 'c')
+  add_project_arguments('-DTUSSLE_ENABLE_SVG_LIBRSVG=1', language: 'c')
 elif get_option('svg-backend') == 'nanosvg'
   if system_nanosvg.found() and system_nanosvgrast.found()
     nanosvg = declare_dependency(
@@ -111,7 +111,7 @@ elif get_option('svg-backend') == 'nanosvg'
       dependencies: math)
     svg_backend = 'nanosvg (bundled)'
   endif
-  add_project_arguments('-DFUZZEL_ENABLE_SVG_NANOSVG=1', language: 'c')
+  add_project_arguments('-DTUSSLE_ENABLE_SVG_NANOSVG=1', language: 'c')
   librsvg = declare_dependency()
   resvg = declare_dependency()
 elif get_option('svg-backend') == 'resvg'
@@ -119,7 +119,7 @@ elif get_option('svg-backend') == 'resvg'
   resvg = cc.find_library('resvg', required: true)
   if cc.has_header('resvg.h')
     svg_backend = 'resvg'
-    add_project_arguments('-DFUZZEL_ENABLE_SVG_RESVG=1', language: 'c')
+    add_project_arguments('-DTUSSLE_ENABLE_SVG_RESVG=1', language: 'c')
   else
     error('resvg.h not found. Please install resvg development files.')
   endif
@@ -185,8 +185,8 @@ srgb_funcs = custom_target(
   command: [python, generate_srgb_funcs, '@OUTPUT0@', '@OUTPUT1@']
 )
 
-fuzzel = executable(
-  'fuzzel',
+tussle = executable(
+  'tussle',
   'application.c', 'application.h',
   'char32.c', 'char32.h',
   'clipboard.c', 'clipboard.h',
@@ -203,7 +203,7 @@ fuzzel = executable(
   'main.c',
   'match.c', 'match.h',
   'path.c', 'path.h',
-  'png.c', 'png-fuzzel.h',
+  'png.c', 'png-tussle.h',
   'prompt.c', 'prompt.h',
   'render.c', 'render.h',
   'shm.c', 'shm.h',
@@ -247,7 +247,7 @@ if fish.found() and wtype.found()
            args: ['-c',
                   'fishtape @0@/test/@1@.fish'.format(meson.current_source_dir(),
                                                       test_case)],
-           env: {'FUZZEL_TEST_BIN': fuzzel.full_path(),
+           env: {'TUSSLE_TEST_BIN': tussle.full_path(),
                  'MALLOC_PERTURB_': '0',
                  'ASAN_OPTIONS': 'non-empty-invalid-value=0',
                  'UBSAN_OPTIONS': 'non-empty-invalid-value=0',
@@ -258,14 +258,13 @@ if fish.found() and wtype.found()
 endif
 
 install_data(
-  'fuzzel.ini',
-  install_dir: join_paths(get_option('sysconfdir'), 'xdg', 'fuzzel'))
+  'tussle.ini',
+  install_dir: join_paths(get_option('sysconfdir'), 'xdg', 'tussle'))
 install_data(
   'LICENSE', 'README.md', 'CHANGELOG.md',
-  install_dir: join_paths(get_option('datadir'), 'doc', 'fuzzel'))
+  install_dir: join_paths(get_option('datadir'), 'tussle'))
 
 subdir('completions')
-subdir('doc')
 
 summary(
   {

@@ -1384,7 +1384,7 @@ match_thread(void *_ctx)
      * 99.
      */
     char proc_title[16];
-    xsnprintf(proc_title, sizeof(proc_title), "fuzzel:mtch:%d", my_id);
+    xsnprintf(proc_title, sizeof(proc_title), "tussle:mtch:%d", my_id);
 
     if (pthread_setname_np(pthread_self(), proc_title) < 0)
         LOG_ERRNO("render worker %d: failed to set process title", my_id);

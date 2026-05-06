@@ -2,7 +2,7 @@ CAIRO=disabled       # disabled|enabled
 PNG_BACKEND=libpng   # none|libpng
 SVG_BACKEND=resvg    # none|librsvg|nanosvg|resvg (librsvg force-enables cairo, nanosvg is bundled)
 
-pkgname=fuzzel
+pkgname=tussle
 pkgver=1.14.1
 pkgrel=1
 pkgdesc="Simplistic application launcher for wayland"

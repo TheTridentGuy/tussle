@@ -743,7 +743,7 @@ xdg_find_programs(const char *terminal, bool include_actions,
     if (applications->count > 0) {
         applications->v = xmalloc(tll_length(apps) * sizeof(applications->v[0]));
     } else {
-        LOG_WARN("No applications found. See SEARCH PATHS in `man fuzzel` for details.");
+        LOG_WARN("No applications found. See SEARCH PATHS in `man tussle` for details.");
         applications->v = NULL;
     }
 

@@ -4,15 +4,15 @@
 #include <pixman.h>
 #include <threads.h>
 
-#if defined(FUZZEL_ENABLE_SVG_LIBRSVG)
+#if defined(TUSSLE_ENABLE_SVG_LIBRSVG)
  #include <librsvg/rsvg.h>
 #endif
 
-#if defined(FUZZEL_ENABLE_SVG_NANOSVG)
+#if defined(TUSSLE_ENABLE_SVG_NANOSVG)
  #include <nanosvg/nanosvg.h>
 #endif
 
-#if defined(FUZZEL_ENABLE_SVG_RESVG)
+#if defined(TUSSLE_ENABLE_SVG_RESVG)
  #include <resvg.h>
 #endif
 
@@ -34,16 +34,16 @@ struct icon {
     char *path;
     enum icon_type type;
     union {
-#if defined(FUZZEL_ENABLE_PNG_LIBPNG)
+#if defined(TUSSLE_ENABLE_PNG_LIBPNG)
         pixman_image_t *png;
 #else
         void *png;
 #endif
-#if defined(FUZZEL_ENABLE_SVG_LIBRSVG)
+#if defined(TUSSLE_ENABLE_SVG_LIBRSVG)
         RsvgHandle *svg;
-#elif defined(FUZZEL_ENABLE_SVG_NANOSVG)
+#elif defined(TUSSLE_ENABLE_SVG_NANOSVG)
         NSVGimage *svg;
-#elif defined(FUZZEL_ENABLE_SVG_RESVG)
+#elif defined(TUSSLE_ENABLE_SVG_RESVG)
         resvg_render_tree *svg;
 #else
         void *svg;

@@ -22,7 +22,7 @@
 #define pthread_setname_np(thread, name) pthread_setname_np(thread, "%s", (void *)name)
 #endif
 
-#if defined(FUZZEL_ENABLE_CAIRO)
+#if defined(TUSSLE_ENABLE_CAIRO)
 #include <cairo.h>
 #else
 #define cairo_t void
@@ -30,11 +30,11 @@
 
 #include <fcft/fcft.h>
 
-#if defined(FUZZEL_ENABLE_SVG_NANOSVG)
+#if defined(TUSSLE_ENABLE_SVG_NANOSVG)
  #include <nanosvg/nanosvgrast.h>
 #endif
 
-#if defined(FUZZEL_ENABLE_SVG_RESVG)
+#if defined(TUSSLE_ENABLE_SVG_RESVG)
  #include <resvg.h>
 #endif
 
@@ -1080,7 +1080,7 @@ render_match_text(pixman_image_t *pix, double *_x, double _y, double max_x,
     *_x = x;
 }
 
-#if defined(FUZZEL_ENABLE_SVG_LIBRSVG)
+#if defined(TUSSLE_ENABLE_SVG_LIBRSVG)
 static void
 render_svg_librsvg(const struct icon *icon, int x, int y, int size,
                    cairo_t *cairo)
@@ -1127,14 +1127,14 @@ render_svg_librsvg(const struct icon *icon, int x, int y, int size,
  #endif
     cairo_restore(cairo);
 }
-#endif /* FUZZEL_ENABLE_SVG_LIBRSVG */
+#endif /* TUSSLE_ENABLE_SVG_LIBRSVG */
 
-#if defined(FUZZEL_ENABLE_SVG_NANOSVG)
+#if defined(TUSSLE_ENABLE_SVG_NANOSVG)
 static void
 render_svg_nanosvg(struct icon *icon, int x, int y, int size,
                    pixman_image_t *pix, cairo_t *cairo, bool gamma_correct)
 {
-#if defined(FUZZEL_ENABLE_CAIRO)
+#if defined(TUSSLE_ENABLE_CAIRO)
     cairo_surface_flush(cairo_get_target(cairo));
 #endif
 
@@ -1246,18 +1246,18 @@ render_svg_nanosvg(struct icon *icon, int x, int y, int size,
         y + (size - h) / 2,
         w, h);
 
-#if defined(FUZZEL_ENABLE_CAIRO)
+#if defined(TUSSLE_ENABLE_CAIRO)
     cairo_surface_mark_dirty(cairo_get_target(cairo));
 #endif
 }
-#endif /* FUZZEL_ENABLE_SVG_NANOSVG */
+#endif /* TUSSLE_ENABLE_SVG_NANOSVG */
 
-#if defined(FUZZEL_ENABLE_SVG_RESVG)
+#if defined(TUSSLE_ENABLE_SVG_RESVG)
 static void
 render_svg_resvg(struct icon *icon, int x, int y, int size,
                  pixman_image_t *pix, cairo_t *cairo, bool gamma_correct)
 {
-#if defined(FUZZEL_ENABLE_CAIRO)
+#if defined(TUSSLE_ENABLE_CAIRO)
     cairo_surface_flush(cairo_get_target(cairo));
 #endif
 
@@ -1357,11 +1357,11 @@ render_svg_resvg(struct icon *icon, int x, int y, int size,
         y + (size - h) / 2,
         w, h);
 
-#if defined(FUZZEL_ENABLE_CAIRO)
+#if defined(TUSSLE_ENABLE_CAIRO)
     cairo_surface_mark_dirty(cairo_get_target(cairo));
 #endif
 }
-#endif /* FUZZEL_ENABLE_SVG_RESVG */
+#endif /* TUSSLE_ENABLE_SVG_RESVG */
 
 static void
 render_svg(struct icon *icon, int x, int y, int size,
@@ -1384,24 +1384,24 @@ render_svg(struct icon *icon, int x, int y, int size,
 
     struct timespec *render_start = time_begin();
 
-#if defined(FUZZEL_ENABLE_SVG_LIBRSVG)
+#if defined(TUSSLE_ENABLE_SVG_LIBRSVG)
     render_svg_librsvg(icon, x, y, size, cairo);
-#elif defined(FUZZEL_ENABLE_SVG_NANOSVG)
+#elif defined(TUSSLE_ENABLE_SVG_NANOSVG)
     render_svg_nanosvg(icon, x, y, size, pix, cairo, gamma_correct);
-#elif defined(FUZZEL_ENABLE_SVG_RESVG)
+#elif defined(TUSSLE_ENABLE_SVG_RESVG)
     render_svg_resvg(icon, x, y, size, pix, cairo, gamma_correct);
 #endif
 
     time_finish(render_start, NULL, "%s rendered", icon->path);
 }
 
-#if defined(FUZZEL_ENABLE_PNG_LIBPNG)
+#if defined(TUSSLE_ENABLE_PNG_LIBPNG)
 static void
 render_png_libpng(struct icon *icon, int x, int y, int size,
                   pixman_image_t *pix, cairo_t *cairo,
                   enum scaling_filter scaling_filter)
 {
-#if defined(FUZZEL_ENABLE_CAIRO)
+#if defined(TUSSLE_ENABLE_CAIRO)
     cairo_surface_flush(cairo_get_target(cairo));
 #endif
 
@@ -1550,11 +1550,11 @@ render_png_libpng(struct icon *icon, int x, int y, int size,
         y + (size - height) / 2,
         width, height);
 
-#if defined(FUZZEL_ENABLE_CAIRO)
+#if defined(TUSSLE_ENABLE_CAIRO)
     cairo_surface_mark_dirty(cairo_get_target(cairo));
 #endif
 }
-#endif /* FUZZEL_ENABLE_PNG_LIBPNG */
+#endif /* TUSSLE_ENABLE_PNG_LIBPNG */
 
 static void
 render_png(struct icon *icon, int x, int y, int size, pixman_image_t *pix,
@@ -1577,7 +1577,7 @@ render_png(struct icon *icon, int x, int y, int size, pixman_image_t *pix,
 
     struct timespec *start_render = time_begin();
 
-#if defined(FUZZEL_ENABLE_PNG_LIBPNG)
+#if defined(TUSSLE_ENABLE_PNG_LIBPNG)
     render_png_libpng(icon, x, y, size, pix, cairo, scaling_filter);
 #endif
 
@@ -1794,7 +1794,7 @@ render_match_list(struct render *render, struct buffer *buf,
             render_one_match_entry(
                 render, matches, match, render_icons, i, i == selected,
                 buf->width, buf->height, buf->pix[0],
-#if defined(FUZZEL_ENABLE_CAIRO)
+#if defined(TUSSLE_ENABLE_CAIRO)
                 buf->cairo[0]
 #else
                 NULL
@@ -1836,7 +1836,7 @@ render_worker_thread(void *_ctx)
     pthread_sigmask(SIG_SETMASK, &mask, NULL);
 
     char proc_title[16];
-    xsnprintf(proc_title, sizeof(proc_title), "fuzzel:rend:%d", my_id);
+    xsnprintf(proc_title, sizeof(proc_title), "tussle:rend:%d", my_id);
 
     if (pthread_setname_np(pthread_self(), proc_title) < 0)
         LOG_ERRNO("render worker %d: failed to set process title", my_id);
@@ -1873,7 +1873,7 @@ render_worker_thread(void *_ctx)
                     render, matches, match, render_icons,
                     row_no, row_no == selected, buf->width, buf->height,
                     buf->pix[my_id],
-#if defined(FUZZEL_ENABLE_CAIRO)
+#if defined(TUSSLE_ENABLE_CAIRO)
                     buf->cairo[my_id]
 #else
                     NULL

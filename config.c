@@ -189,9 +189,9 @@ open_config(void)
 
     /* First, check XDG_CONFIG_HOME (or .config, if unset) */
     if (xdg_config_home != NULL && xdg_config_home[0] == '/') {
-        path = xstrjoin(xdg_config_home, "/fuzzel/fuzzel.ini");
+        path = xstrjoin(xdg_config_home, "/tussle/tussle.ini");
     } else if (home_dir != NULL) {
-        path = xstrjoin(home_dir, "/.config/fuzzel/fuzzel.ini");
+        path = xstrjoin(home_dir, "/.config/tussle/tussle.ini");
     }
 
     if (path != NULL) {
@@ -216,7 +216,7 @@ open_config(void)
          conf_dir = strtok(NULL, ":"))
     {
         free(path);
-        path = xstrjoin(conf_dir, "/fuzzel/fuzzel.ini");
+        path = xstrjoin(conf_dir, "/tussle/tussle.ini");
         int fd = open(path, O_RDONLY | O_CLOEXEC);
         if (fd >= 0) {
             ret = (struct config_file){.path = path, .fd = fd};

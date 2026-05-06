@@ -22,7 +22,7 @@
 #include <tllist.h>
 #include <fcft/fcft.h>
 
-#define LOG_MODULE "fuzzel"
+#define LOG_MODULE "tussle"
 #define LOG_ENABLE_DBG 0
 #include "log.h"
 #include "application.h"
@@ -112,8 +112,8 @@ read_cache(const char *path, struct application_list *apps, bool dmenu)
         }
 
         int fd = -1;
-        if (fstatat(cache_dir_fd, "fuzzel", &st, 0) < 0 ||
-            (fd = openat(cache_dir_fd, "fuzzel", O_RDONLY | O_CLOEXEC)) < 0 ||
+        if (fstatat(cache_dir_fd, "tussle", &st, 0) < 0 ||
+            (fd = openat(cache_dir_fd, "tussle", O_RDONLY | O_CLOEXEC)) < 0 ||
             (f = fdopen(fd, "r")) == NULL)
         {
             close(cache_dir_fd);
@@ -121,7 +121,7 @@ read_cache(const char *path, struct application_list *apps, bool dmenu)
                 close(fd);
 
             if (errno != ENOENT)
-                LOG_ERRNO("%s/fuzzel: failed to open", path);
+                LOG_ERRNO("%s/tussle: failed to open", path);
             return;
         }
         close(cache_dir_fd);
@@ -238,14 +238,14 @@ write_cache(const char *path, const struct application_list *apps, bool dmenu)
             return;
         }
 
-        fd = openat(cache_dir_fd, "fuzzel", O_WRONLY | O_CREAT | O_TRUNC | O_CLOEXEC, 0644);
+        fd = openat(cache_dir_fd, "tussle", O_WRONLY | O_CREAT | O_TRUNC | O_CLOEXEC, 0644);
         close(cache_dir_fd);
     } else {
         fd = open(path, O_WRONLY | O_CREAT | O_TRUNC | O_CLOEXEC, 0644);
     }
 
     if (fd == -1) {
-        LOG_ERRNO("%s/fuzzel: failed to open", path);
+        LOG_ERRNO("%s/tussle: failed to open", path);
         return;
     }
 
@@ -306,22 +306,22 @@ version_and_features(void)
 {
     static char buf[256];
     xsnprintf(buf, sizeof(buf), "version: %s %ccairo %cpng %csvg%s %cassertions",
-             FUZZEL_VERSION,
-#if defined(FUZZEL_ENABLE_CAIRO)
+             TUSSLE_VERSION,
+#if defined(TUSSLE_ENABLE_CAIRO)
              '+',
 #else
              '-',
 #endif
-#if defined(FUZZEL_ENABLE_PNG_LIBPNG)
+#if defined(TUSSLE_ENABLE_PNG_LIBPNG)
              '+',
 #else
              '-',
 #endif
-#if defined(FUZZEL_ENABLE_SVG_NANOSVG)
+#if defined(TUSSLE_ENABLE_SVG_NANOSVG)
              '+', "(nanosvg)",
-#elif defined(FUZZEL_ENABLE_SVG_LIBRSVG)
+#elif defined(TUSSLE_ENABLE_SVG_LIBRSVG)
              '+', "(librsvg)",
-#elif defined(FUZZEL_ENABLE_SVG_RESVG)
+#elif defined(TUSSLE_ENABLE_SVG_RESVG)
              '+', "(resvg)",
 #else
              '-', "",
@@ -342,16 +342,16 @@ print_usage(const char *prog_name)
     printf("\n");
     printf("Options:\n");
     printf("     --config=PATH               load configuration from PATH\n"
-           "                                 (XDG_CONFIG_HOME/fuzzel/fuzzel.ini)\n"
+           "                                 (XDG_CONFIG_HOME/tussle/tussle.ini)\n"
            "     --check-config              verify configuration, exit with 0 if ok,\n"
            "                                 otherwise exit with 1\n"
            "     --cache=PATH                load most recently launched applications from\n"
-           "                                 PATH (XDG_CACHE_HOME/fuzzel)\n"
+           "                                 PATH (XDG_CACHE_HOME/tussle)\n"
            "  -n,--namespace=NAMESPACE       layer shell surface namespace\n"
            "  -o,--output=OUTPUT             output (monitor) to display on (none)\n"
            "  -f,--font=FONT                 font name and style, in FontConfig format\n"
            "                                 (monospace)\n"
-           "     --use-bold                  allow fuzzel to use bold fonts\n"
+           "     --use-bold                  allow tussle to use bold fonts\n"
            "  -D,--dpi-aware=no|yes|auto     enable or disable DPI aware rendering (auto)\n"
            "     --icon-theme=NAME           icon theme name (\"default\")\n"
            "  -I,--no-icons                  do not render any icons\n"
@@ -421,7 +421,7 @@ print_usage(const char *prog_name)
            "                                 mean more fuzzy matches\n"
            "     --line-height=HEIGHT        override line height from font metrics\n"
            "     --letter-spacing=AMOUNT     additional letter spacing\n"
-           "     --layer=top|overlay         which layer to render the fuzzel window on\n"
+           "     --layer=top|overlay         which layer to render the tussle window on\n"
            "                                 (top)\n"
            "     --keyboard-focus=exclusive|on-demand  keyboard focus mode (exclusive)\n"
            "     --no-exit-on-keyboard-focus-loss  do not exit when losing keyboard focus\n"
@@ -537,7 +537,7 @@ lock_file_name(void)
     if (wayland_display == NULL)
         return NULL;
 
-    char *path = xasprintf("%s/fuzzel-%s.lock", xdg_runtime_dir, wayland_display);
+    char *path = xasprintf("%s/tussle-%s.lock", xdg_runtime_dir, wayland_display);
     LOG_DBG("lock file: %s", path);
     return path;
 }
@@ -555,7 +555,7 @@ acquire_file_lock(const char *path, int *fd)
     if (flock(*fd, LOCK_EX | LOCK_NB) < 0) {
         if (errno == EWOULDBLOCK) {
             /* The file is locked and the LOCK_NB flag was selected */
-            LOG_ERR("%s: failed to acquire lock: fuzzel already running?", path);
+            LOG_ERR("%s: failed to acquire lock: tussle already running?", path);
             return false;
         }
     }
