@@ -4,3 +4,4 @@
 /subprojects/*
 !/subprojects/*.wrap
 /.cache/
+.idea/
