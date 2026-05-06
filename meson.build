@@ -261,7 +261,7 @@ install_data(
   'tussle.ini',
   install_dir: join_paths(get_option('sysconfdir'), 'xdg', 'tussle'))
 install_data(
-  'LICENSE', 'README.md', 'CHANGELOG.md',
+  'LICENSE', 'README.md',
   install_dir: join_paths(get_option('datadir'), 'tussle'))
 
 subdir('completions')
