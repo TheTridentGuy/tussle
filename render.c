@@ -787,7 +787,7 @@ render_prompt(struct render *render, struct buffer *buf,
     }
 
     int x = render->border_size + render->x_margin;
-    int y = render->border_size + render->y_margin + render_baseline(render) + render->message_height;
+    int y = render->border_size + render->y_margin + render->row_height + render_baseline(render) + render->message_height; // Add row height to make space for time and battery
 
     /* Erase background */
     pixman_color_t bg = render->pix_background_color;
@@ -796,7 +796,7 @@ render_prompt(struct render *render, struct buffer *buf,
         PIXMAN_OP_SRC, buf->pix[0], &bg, 1,
         &(pixman_rectangle16_t){
             row_bg_x(render),
-            render->border_size + render->y_margin + render->message_height,
+            render->border_size + render->y_margin + render->row_height + render->message_height, // Again, space for time and bat %
             buf->width - 2 * row_bg_x(render),
             render->row_height});
 
