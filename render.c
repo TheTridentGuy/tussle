@@ -1587,7 +1587,8 @@ render_png(struct icon *icon, int x, int y, int size, pixman_image_t *pix,
 static int
 first_row_y(const struct render *render)
 {
-    return (render->border_size +
+    return (render->row_height + // Space for time and battery percentage
+            render->border_size +
             render->y_margin +
             (render->conf->hide_prompt ? 0 : render->row_height) +
             (render->conf->hide_prompt ? 0 : render->inner_pad) +
@@ -2033,6 +2034,7 @@ render_resized(struct render *render, int *new_width, int *new_height)
     const unsigned height =
         border_size +                        /* Top border */
         y_margin +
+        row_height + // Time and battery percentage will go here
         (render->conf->hide_prompt ? 0 : row_height) +          /* The prompt (hidden if hide_prompt) */
         (render->conf->hide_prompt ? 0 : inner_pad) +           /* Padding between prompt and matches (only if prompt shown) */
         render->conf->lines * row_height +   /* Matches */
@@ -2162,7 +2164,7 @@ render_get_row_num(const struct render *render, int width, int x, int y,
     const int row_height = render->row_height;
 
     const int min_x = row_bg_x(render);
-    const int max_x = width - (min_x);
+    const int max_x = width - min_x;
 
     const int first_row = first_row_y(render);
 
