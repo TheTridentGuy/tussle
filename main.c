@@ -1981,7 +1981,7 @@ main(int argc, char *const *argv)
             break;
 
         case 'v':
-            printf("fuzzel %s\n", version_and_features());
+            printf("tussle %s\n", version_and_features());
             return EXIT_SUCCESS;
 
         case 'h':
@@ -2384,6 +2384,7 @@ main(int argc, char *const *argv)
     wayl_refresh(wayl);
 
     while (true) {
+        // TODO: add code for updating/rendering time and battery percentage
         wayl_flush(wayl);
         if (!fdm_poll(fdm))
             break;
