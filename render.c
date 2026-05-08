@@ -10,6 +10,7 @@
 #include <threads.h>
 #include <uchar.h>
 #include <sys/time.h>
+#include <wchar.h>
 
 #include "column.h"
 #include "macros.h"
@@ -751,6 +752,13 @@ render_prompt(struct render *render, struct buffer *buf,
     assert(font != NULL);
 
     const struct config *conf = render->conf;
+
+    const time_t t = time(NULL);
+    struct tm tm = *localtime(&t);
+    const wchar_t *time_format_string = L"%H:%M:%S";
+    wchar_t time_string_wchar[wcslen(time_format_string)+1];
+    wcsftime(time_string_wchar, wcslen(time_string_wchar), time_format_string, &tm);
+    const char32_t *time_string = (char32_t *) &time_string_wchar;
 
     const char32_t *pprompt = prompt_prompt(prompt);
     size_t prompt_len = c32len(pprompt);
