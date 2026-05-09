@@ -1,5 +1,6 @@
 #include "render.h"
 
+#include <errno.h>
 #include <limits.h>
 #include <pthread.h>
 #include <semaphore.h>
@@ -754,11 +755,16 @@ render_prompt(struct render *render, struct buffer *buf,
     const struct config *conf = render->conf;
 
     const time_t t = time(NULL);
-    struct tm tm = *localtime(&t);
+    const struct tm tm = *localtime(&t);
     const wchar_t *time_format_string = L"%H:%M:%S";
-    wchar_t time_string_wchar[wcslen(time_format_string)+1];
-    wcsftime(time_string_wchar, wcslen(time_string_wchar), time_format_string, &tm);
+    wchar_t time_string_wchar[9]; // fuck it we hardcode that length 8 + 1 (null terminator) = 9
+    wcsftime(time_string_wchar, 9, time_format_string, &tm);
+    printf("%zu\n", wcslen(time_string_wchar));
+    printf("%d\n", errno);
+    printf("%ls\n", time_string_wchar);
+    assert(sizeof(wchar_t) == sizeof(char32_t));
     const char32_t *time_string = (char32_t *) &time_string_wchar;
+    size_t time_len = c32len(time_string);
 
     const char32_t *pprompt = prompt_prompt(prompt);
     size_t prompt_len = c32len(pprompt);
@@ -795,7 +801,7 @@ render_prompt(struct render *render, struct buffer *buf,
     }
 
     int x = render->border_size + render->x_margin;
-    int y = render->border_size + render->y_margin + render->row_height + render_baseline(render) + render->message_height; // Add row height to make space for time and battery
+    int y = render->border_size + render->y_margin + render_baseline(render) + render->message_height;
 
     /* Erase background */
     pixman_color_t bg = render->pix_background_color;
@@ -804,9 +810,9 @@ render_prompt(struct render *render, struct buffer *buf,
         PIXMAN_OP_SRC, buf->pix[0], &bg, 1,
         &(pixman_rectangle16_t){
             row_bg_x(render),
-            render->border_size + render->y_margin + render->row_height + render->message_height, // Again, space for time and bat %
+            render->border_size + render->y_margin + render->message_height,
             buf->width - 2 * row_bg_x(render),
-            render->row_height});
+            render->row_height * 2}); // Double row height to erase time/bat% and prompt line
 
 #if 0
     bg = (pixman_color_t){0, 0xffff, 0, 0xffff};
@@ -826,6 +832,7 @@ render_prompt(struct render *render, struct buffer *buf,
     const int max_x =
         buf->width - render->border_size - render->x_margin - stats_width;
 
+    struct fcft_text_run *time_run = NULL;
     struct fcft_text_run *prompt_run = render->prompt_text_run;
     struct fcft_text_run *input_run =
         use_placeholder ? render->placeholder_text_run : NULL;
@@ -839,7 +846,27 @@ render_prompt(struct render *render, struct buffer *buf,
             input_run = fcft_rasterize_text_run_utf32(
                 font, text_len, ptext, subpixel);
         }
+        time_run = fcft_rasterize_text_run_utf32(
+            font, time_len, time_string, subpixel);
     }
+
+    if (time_run != NULL) {
+        for (size_t i = 0; i < time_run->count; i++) {
+            const struct fcft_glyph *glyph = time_run->glyphs[i];
+            const int pixels_needed = max(glyph->x + glyph->width, glyph->advance.x);
+
+            if (x + pixels_needed > max_x)
+                goto out;
+
+            render_glyph(buf->pix[0], glyph, x, y, &render->pix_prompt_color);
+            x += glyph->advance.x;
+        }
+    }else {
+        LOG_ERR("FUCK");
+    }
+
+    x = render->border_size + render->x_margin; // Set them back to what they were before
+    y += render->row_height;
 
     if (prompt_run != NULL) {
         for (size_t i = 0; i < prompt_run->count; i++) {
