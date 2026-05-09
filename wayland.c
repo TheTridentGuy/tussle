@@ -2509,14 +2509,11 @@ frame_callback(void *data, struct wl_callback *wl_callback, uint32_t callback_da
     wl_callback_destroy(wayl->frame_cb);
     wayl->frame_cb = NULL;
 
-    const bool need_refresh =
-        wayl->need_refresh || wayl->render_first_frame_transparent;
-
     wayl->need_refresh = false;
     wayl->render_first_frame_transparent = false;
 
-    if (need_refresh)
-        wayl_refresh(wayl);
+    wayl_refresh(wayl); // TODO: find a way to make the time update smoothly that doesn't re-render every frame
+
 }
 
 void

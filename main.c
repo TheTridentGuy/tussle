@@ -2384,7 +2384,6 @@ main(int argc, char *const *argv)
     wayl_refresh(wayl);
 
     while (true) {
-        // TODO: add code for updating/rendering time and battery percentage
         wayl_flush(wayl);
         if (!fdm_poll(fdm))
             break;

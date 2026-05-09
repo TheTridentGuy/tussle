@@ -759,9 +759,6 @@ render_prompt(struct render *render, struct buffer *buf,
     const wchar_t *time_format_string = L"%H:%M:%S";
     wchar_t time_string_wchar[9]; // fuck it we hardcode that length 8 + 1 (null terminator) = 9
     wcsftime(time_string_wchar, 9, time_format_string, &tm);
-    printf("%zu\n", wcslen(time_string_wchar));
-    printf("%d\n", errno);
-    printf("%ls\n", time_string_wchar);
     assert(sizeof(wchar_t) == sizeof(char32_t));
     const char32_t *time_string = (char32_t *) &time_string_wchar;
     size_t time_len = c32len(time_string);
