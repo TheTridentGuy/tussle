@@ -756,9 +756,14 @@ render_prompt(struct render *render, struct buffer *buf,
 
     const time_t t = time(NULL);
     const struct tm tm = *localtime(&t);
-    const wchar_t *time_format_string = L"%H:%M:%S";
-    wchar_t time_string_wchar[9]; // fuck it we hardcode that length 8 + 1 (null terminator) = 9
-    wcsftime(time_string_wchar, 9, time_format_string, &tm);
+    const wchar_t *time_format_string;
+    if (!render->conf->time_format_string) {
+        time_format_string = L"%H:%M:%S";
+    }else {
+        time_format_string = render->conf->time_format_string;
+    }
+    wchar_t time_string_wchar[32]; // 32 max length for final formatted string
+    wcsftime(time_string_wchar, 32, time_format_string, &tm);
     assert(sizeof(wchar_t) == sizeof(char32_t));
     const char32_t *time_string = (char32_t *) &time_string_wchar;
     size_t time_len = c32len(time_string);

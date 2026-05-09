@@ -116,6 +116,7 @@ enum scaling_filter {
 
 struct config {
     char *output;
+    wchar_t *time_format_string;
     char32_t *prompt;
     char32_t *placeholder;
     char32_t *search_text;

@@ -542,7 +542,7 @@ value_to_str(struct context *ctx, char **res)
 }
 
 static bool
-value_to_wchars(struct context *ctx, char32_t **res)
+value_to_char32(struct context *ctx, char32_t **res)
 {
     char32_t *s = ambstoc32(ctx->value);
     if (s == NULL) {
@@ -552,6 +552,16 @@ value_to_wchars(struct context *ctx, char32_t **res)
 
     free(*res);
     *res = s;
+    return true;
+}
+
+static bool value_to_wchar(struct context *ctx, wchar_t **res) {
+    char32_t *s = malloc((strlen(ctx->value)+1)*sizeof(char32_t));
+    if (!value_to_char32(ctx, &s)) {
+        return false;
+    }
+    free(*res);
+    *res = (wchar_t *) s;
     return true;
 }
 
@@ -791,14 +801,17 @@ parse_section_main(struct context *ctx)
     else if (strcmp(key, "match-workers") == 0)
         return value_to_uint16(ctx, 10, &conf->match_worker_count);
 
+    else if (strcmp(key, "time-format") == 0)
+        return value_to_wchar(ctx, &conf->time_format_string);
+
     else if (strcmp(key, "prompt") == 0)
-        return value_to_wchars(ctx, &conf->prompt);
+        return value_to_char32(ctx, &conf->prompt);
 
     else if (strcmp(key, "placeholder") == 0)
-        return value_to_wchars(ctx, &conf->placeholder);
+        return value_to_char32(ctx, &conf->placeholder);
 
     else if (strcmp(key, "message") == 0)
-        return value_to_wchars(ctx, &conf->message);
+        return value_to_char32(ctx, &conf->message);
 
     else if (strcmp(key, "message-mode") == 0) {
         _Static_assert(sizeof(conf->message_mode) == sizeof(int),
