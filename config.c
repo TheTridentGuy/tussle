@@ -804,6 +804,12 @@ parse_section_main(struct context *ctx)
     else if (strcmp(key, "time-format") == 0)
         return value_to_wchar(ctx, &conf->time_format_string);
 
+    else if (strcmp(key, "battery") == 0)
+        return value_to_bool(ctx, &conf->battery);
+
+    else if (strcmp(key, "battery-path") == 0)
+        return value_to_str(ctx, &conf->battery_path);
+
     else if (strcmp(key, "prompt") == 0)
         return value_to_char32(ctx, &conf->prompt);
 

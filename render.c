@@ -769,22 +769,25 @@ render_prompt(struct render *render, struct buffer *buf,
     const char32_t *time_string = (char32_t *) &time_string_wchar;
     size_t time_len = c32len(time_string);
 
+
     // Code for creating battery percentage string
-    FILE *capacity_file = fopen("/sys/class/power_supply/BAT0/capacity", "r");
     char32_t *battery_string = NULL;
     size_t battery_len;
-    if (capacity_file) {
-        char capacity[5]; // xxx%0
-        fgets(capacity, 5, capacity_file);
-        int index = strcspn(capacity, "\n");
-        capacity[index] = '%';
-        capacity[index+1] = 0;
-        battery_string = ambstoc32(capacity);
-        battery_len = c32len(battery_string);
-    }else {
-        LOG_ERR("Failed to read battery percentage from disk.");
+    if(conf->battery){
+        FILE *capacity_file = fopen(conf->battery_path?conf->battery_path:"/sys/class/power_supply/BAT0/capacity", "r");
+        if (capacity_file) {
+            char capacity[5]; // xxx%0
+            fgets(capacity, 5, capacity_file);
+            int index = strcspn(capacity, "\n");
+            capacity[index] = '%';
+            capacity[index+1] = 0;
+            battery_string = ambstoc32(capacity);
+            battery_len = c32len(battery_string);
+        }else {
+            LOG_ERR("Failed to read battery percentage from disk.");
+        }
+        fclose(capacity_file);
     }
-    fclose(capacity_file);
 
     const char32_t *pprompt = prompt_prompt(prompt);
     size_t prompt_len = c32len(pprompt);
@@ -869,7 +872,7 @@ render_prompt(struct render *render, struct buffer *buf,
         }
         time_run = fcft_rasterize_text_run_utf32(
             font, time_len, time_string, subpixel);
-        if (battery_string) {
+        if (conf->battery && battery_string) {
             battery_run = fcft_rasterize_text_run_utf32(
                 font, battery_len, battery_string, subpixel);
         }
@@ -904,6 +907,8 @@ render_prompt(struct render *render, struct buffer *buf,
             x -= glyph->advance.x;
             render_glyph(buf->pix[0], glyph, x, y, &render->pix_prompt_color);
         }
+    }else if (!conf->battery){
+        // Do nothing, user didn't want bat%
     }else {
         LOG_ERR("Failed to render battery.");
     }
