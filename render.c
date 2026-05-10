@@ -754,6 +754,7 @@ render_prompt(struct render *render, struct buffer *buf,
 
     const struct config *conf = render->conf;
 
+    // Code for creating time string
     const time_t t = time(NULL);
     const struct tm tm = *localtime(&t);
     const wchar_t *time_format_string;
@@ -767,6 +768,23 @@ render_prompt(struct render *render, struct buffer *buf,
     assert(sizeof(wchar_t) == sizeof(char32_t));
     const char32_t *time_string = (char32_t *) &time_string_wchar;
     size_t time_len = c32len(time_string);
+
+    // Code for creating battery percentage string
+    FILE *capacity_file = fopen("/sys/class/power_supply/BAT0/capacity", "r");
+    char32_t *battery_string = NULL;
+    size_t battery_len;
+    if (capacity_file) {
+        char capacity[5]; // xxx%0
+        fgets(capacity, 5, capacity_file);
+        int index = strcspn(capacity, "\n");
+        capacity[index] = '%';
+        capacity[index+1] = 0;
+        battery_string = ambstoc32(capacity);
+        battery_len = c32len(battery_string);
+    }else {
+        LOG_ERR("Failed to read battery percentage from disk.");
+    }
+    fclose(capacity_file);
 
     const char32_t *pprompt = prompt_prompt(prompt);
     size_t prompt_len = c32len(pprompt);
@@ -835,6 +853,7 @@ render_prompt(struct render *render, struct buffer *buf,
         buf->width - render->border_size - render->x_margin - stats_width;
 
     struct fcft_text_run *time_run = NULL;
+    struct fcft_text_run *battery_run = NULL;
     struct fcft_text_run *prompt_run = render->prompt_text_run;
     struct fcft_text_run *input_run =
         use_placeholder ? render->placeholder_text_run : NULL;
@@ -850,6 +869,11 @@ render_prompt(struct render *render, struct buffer *buf,
         }
         time_run = fcft_rasterize_text_run_utf32(
             font, time_len, time_string, subpixel);
+        if (battery_string) {
+            battery_run = fcft_rasterize_text_run_utf32(
+                font, battery_len, battery_string, subpixel);
+        }
+
     }
 
     if (time_run != NULL) {
@@ -864,7 +888,24 @@ render_prompt(struct render *render, struct buffer *buf,
             x += glyph->advance.x;
         }
     }else {
-        LOG_ERR("FUCK");
+        LOG_ERR("Failed to render time.");
+    }
+    // Set x to the other side of the window
+    x = buf->width - (render->border_size + render->x_margin);
+
+    if (battery_run != NULL) {
+        for (size_t i = battery_run->count - 1; i + 1 > 0; i--) { // i+1 to keep i from overflowing
+            const struct fcft_glyph *glyph = battery_run->glyphs[i];
+            const int pixels_needed = max(glyph->x + glyph->width, glyph->advance.x);
+
+            if (x - pixels_needed < 0)
+                goto out;
+
+            x -= glyph->advance.x;
+            render_glyph(buf->pix[0], glyph, x, y, &render->pix_prompt_color);
+        }
+    }else {
+        LOG_ERR("Failed to render battery.");
     }
 
     x = render->border_size + render->x_margin; // Set them back to what they were before
