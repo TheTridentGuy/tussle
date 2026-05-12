@@ -789,7 +789,7 @@ render_prompt(struct render *render, struct buffer *buf,
                 battery_charging = true;
             }
             battery_string[0] = battery_charging?U'\u25b2': U'\u25bc'; // Up or down pointing triangle
-            battery_string[1] = U' '; // space to look nice
+            battery_string[1] = U'\u2009'; // thin space to look nice
             capacity_string = ambstoc32(capacity);
             for(size_t i = 0; i <= c32len(capacity_string); i++) { // Shitty string concatenation
                 battery_string[i+2] = capacity_string[i];
