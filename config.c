@@ -810,6 +810,9 @@ parse_section_main(struct context *ctx)
     else if (strcmp(key, "battery-path") == 0)
         return value_to_str(ctx, &conf->battery_path);
 
+    else if (strcmp(key, "battery-status-bat") == 0)
+        return value_to_str(ctx, &conf->battery_status_path);
+
     else if (strcmp(key, "prompt") == 0)
         return value_to_char32(ctx, &conf->prompt);
 

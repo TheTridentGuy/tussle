@@ -123,6 +123,7 @@ struct config {
     char32_t *message;
     bool battery;
     char *battery_path;
+    char *battery_status_path;
     enum message_mode message_mode;
     bool prompt_only;
     enum match_fields match_fields;

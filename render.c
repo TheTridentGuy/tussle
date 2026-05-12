@@ -771,22 +771,35 @@ render_prompt(struct render *render, struct buffer *buf,
 
 
     // Code for creating battery percentage string
-    char32_t *battery_string = NULL;
-    size_t battery_len;
+    char32_t battery_string[7]; // Up or down triangle + space + xxx%0
+    char32_t *capacity_string = NULL;
+    bool battery_charging = false;
+    size_t battery_len = 0;
     if(conf->battery){
         FILE *capacity_file = fopen(conf->battery_path?conf->battery_path:"/sys/class/power_supply/BAT0/capacity", "r");
-        if (capacity_file) {
+        FILE *status_file = fopen(conf->battery_status_path?conf->battery_status_path:"/sys/class/power_supply/BAT0/status", "r");
+        if (capacity_file && status_file) {
             char capacity[5]; // xxx%0
             fgets(capacity, 5, capacity_file);
-            int index = strcspn(capacity, "\n");
+            size_t index = strcspn(capacity, "\n");
             capacity[index] = '%';
             capacity[index+1] = 0;
-            battery_string = ambstoc32(capacity);
+            char status = fgetc(status_file); // We only care about the first character, since it can distinguish all possible states.
+            if ('C' == status || 'F' == status) { // For "Charging" or "Full", vs "Discharging"
+                battery_charging = true;
+            }
+            battery_string[0] = battery_charging?U'\u25b2': U'\u25bc'; // Up or down pointing triangle
+            battery_string[1] = U' '; // space to look nice
+            capacity_string = ambstoc32(capacity);
+            for(size_t i = 0; i <= c32len(capacity_string); i++) { // Shitty string concatenation
+                battery_string[i+2] = capacity_string[i];
+            }
             battery_len = c32len(battery_string);
         }else {
-            LOG_ERR("Failed to read battery percentage from disk.");
+            LOG_ERR("Failed to read battery percentage or status from disk.");
         }
         fclose(capacity_file);
+        fclose(status_file);
     }
 
     const char32_t *pprompt = prompt_prompt(prompt);
@@ -872,7 +885,7 @@ render_prompt(struct render *render, struct buffer *buf,
         }
         time_run = fcft_rasterize_text_run_utf32(
             font, time_len, time_string, subpixel);
-        if (conf->battery && battery_string) {
+        if (conf->battery && capacity_string) {
             battery_run = fcft_rasterize_text_run_utf32(
                 font, battery_len, battery_string, subpixel);
         }
