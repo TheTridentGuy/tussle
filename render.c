@@ -866,8 +866,12 @@ render_prompt(struct render *render, struct buffer *buf,
         ? render_match_count(render, buf, prompt, matches)
         : 0;
 
-    const int max_x =
+    int max_x =
         buf->width - render->border_size - render->x_margin - stats_width;
+    if (conf->cursor == CURSOR_UNDERLINE) {
+        max_x -= font->max_advance.x;
+    }
+
 
     struct fcft_text_run *time_run = NULL;
     struct fcft_text_run *battery_run = NULL;
