@@ -1123,6 +1123,12 @@ parse_section_colors(struct context *ctx)
     else if (strcmp(key, "border") == 0)
         return value_to_color(ctx, true, &conf->colors.border);
 
+    else if (strcasecmp(key, "time") == 0)
+        return value_to_color(ctx, true, &conf->colors.time);
+
+    else if (strcasecmp(key, "battery") == 0)
+        return value_to_color(ctx, true, &conf->colors.battery);
+
     else
         LOG_CONTEXTUAL_ERR("not a valid option: %s", key);
 
@@ -1731,6 +1737,8 @@ config_load(struct config *conf, const char *conf_path,
             .selection_match = conf_hex_to_rgba(0xcb4b16ff),
             .counter = conf_hex_to_rgba(0x93a1a1ff),
             .placeholder = conf_hex_to_rgba(0x93a1a1ff),
+            .battery = conf_hex_to_rgba(0x586e75ff),
+            .time = conf_hex_to_rgba(0x586e75ff),
         },
         .border = {
             .size = 1u,

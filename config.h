@@ -203,6 +203,8 @@ struct config {
     } pad;
 
     struct {
+        struct rgba battery;
+        struct rgba time;
         struct rgba background;
         struct rgba border;
         struct rgba text;

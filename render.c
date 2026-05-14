@@ -90,6 +90,8 @@ struct render {
     pixman_color_t pix_selection_match_color;
     pixman_color_t pix_counter_color;
     pixman_color_t pix_placeholder_color;
+    pixman_color_t pix_time_color;
+    pixman_color_t pix_battery_color;
 
     unsigned x_margin;
     unsigned y_margin;
@@ -900,7 +902,7 @@ render_prompt(struct render *render, struct buffer *buf,
             if (x + pixels_needed > max_x)
                 goto out;
 
-            render_glyph(buf->pix[0], glyph, x, y, &render->pix_prompt_color);
+            render_glyph(buf->pix[0], glyph, x, y, &render->pix_time_color);
             x += glyph->advance.x;
         }
     }else {
@@ -918,7 +920,7 @@ render_prompt(struct render *render, struct buffer *buf,
                 goto out;
 
             x -= glyph->advance.x;
-            render_glyph(buf->pix[0], glyph, x, y, &render->pix_prompt_color);
+            render_glyph(buf->pix[0], glyph, x, y, &render->pix_battery_color);
         }
     }else if (!conf->battery){
         // Do nothing, user didn't want bat%
@@ -2071,6 +2073,8 @@ render_initialize_colors(struct render *render, const struct config *conf,
     render->pix_selection_match_color = rgba2pixman(gamma_correct, conf->colors.selection_match);
     render->pix_counter_color = rgba2pixman(gamma_correct, conf->colors.counter);
     render->pix_placeholder_color = rgba2pixman(gamma_correct, conf->colors.placeholder);
+    render->pix_time_color = rgba2pixman(gamma_correct, conf->colors.time);
+    render->pix_battery_color = rgba2pixman(gamma_correct, conf->colors.battery);
 }
 
 void

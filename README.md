@@ -5,6 +5,7 @@ My personal fork of [Fuzzel](https://codeberg.org/dnkl/fuzzel)
 - Current time is displayed above the prompt, in a format that can be set using the `time-format` config option (defaults to `%H:%M:%S`)
 - Battery percentage can be displayed across from time. To enable this, add the line `battery=true` in the main section of `tussle.ini`. You can set the path that the battery percentage is read from with the `battery-path` config option (defaults to `/sys/class/power_supply/BAT0/capacity`).
 - When battery percentage is displayed, a triangle next to it points up or down, to indicate whether the battery is charging, or discharging. You can change the path this status is read from with the `battery-status-path` option (defaults to `/sys/class/power_supply/BAT0/status`). 
+- Config options for color of time and battery percentage. `battery` and `time` under the `[colors]` section.
 
 
 ## Requirements
