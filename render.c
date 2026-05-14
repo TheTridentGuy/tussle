@@ -436,7 +436,7 @@ render_cursor(const struct render *render, int x, int baseline, pixman_image_t *
 {
     struct fcft_font *font = render->font;
 
-    if (true) {
+    if (render->conf->cursor == CURSOR_BAR) {
         /* Bar cursor */
         const int height = min(font->ascent + font->descent, render->row_height);
 
@@ -448,7 +448,6 @@ render_cursor(const struct render *render, int x, int baseline, pixman_image_t *
                 font->underline.thickness,
                 height});
     } else {
-        /* TODO: future: underline cursor */
         pixman_image_fill_rectangles(
             PIXMAN_OP_SRC, pix, &render->pix_input_color,
             1, &(pixman_rectangle16_t){

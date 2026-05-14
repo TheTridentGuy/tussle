@@ -792,6 +792,16 @@ parse_section_main(struct context *ctx)
         return true;
     }
 
+    else if (strcmp(key, "cursor") == 0) {
+        if (strcmp(value, "bar") == 0) {
+            conf->cursor = CURSOR_BAR;
+        }else if (strcmp(value, "underline") == 0) {
+            conf->cursor = CURSOR_UNDERLINE;
+        }else {
+            LOG_CONTEXTUAL_ERR("cursor must be one of \"bar\", or \"underline\"");
+        }
+    }
+
     else if (strcmp(key, "gamma-correct-blending") == 0)
         return value_to_bool(ctx, &conf->gamma_correct);
 
@@ -1693,6 +1703,7 @@ config_load(struct config *conf, const char *conf_path,
         .hide_when_prompt_empty = false,
         .actions_enabled = false,
         .match_mode = MATCH_MODE_FZF,
+        .cursor = CURSOR_BAR,
         .sort_result = true,
         .match_counter = false,
         .delayed_filter_ms = 300,

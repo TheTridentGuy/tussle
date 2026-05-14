@@ -24,6 +24,11 @@ enum dpi_aware {
     DPI_AWARE_NO,
 };
 
+enum cursor {
+    CURSOR_BAR,
+    CURSOR_UNDERLINE,
+};
+
 enum dmenu_mode {
     DMENU_MODE_TEXT,
     DMENU_MODE_INDEX,
@@ -127,6 +132,7 @@ struct config {
     enum message_mode message_mode;
     bool prompt_only;
     enum match_fields match_fields;
+    enum cursor cursor;
 
     char *namespace;
 
