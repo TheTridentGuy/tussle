@@ -802,6 +802,10 @@ parse_section_main(struct context *ctx)
         }
     }
 
+    else if (strcmp(key, "blink-cursor-ms") == 0) {
+        return value_to_uint16(ctx, 10, &conf->blink_cursor_ms);
+    }
+
     else if (strcmp(key, "gamma-correct-blending") == 0)
         return value_to_bool(ctx, &conf->gamma_correct);
 
@@ -1704,6 +1708,7 @@ config_load(struct config *conf, const char *conf_path,
         .actions_enabled = false,
         .match_mode = MATCH_MODE_FZF,
         .cursor = CURSOR_BAR,
+        .blink_cursor_ms = 0,
         .sort_result = true,
         .match_counter = false,
         .delayed_filter_ms = 300,

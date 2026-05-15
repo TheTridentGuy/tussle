@@ -436,24 +436,36 @@ render_cursor(const struct render *render, int x, int baseline, pixman_image_t *
 {
     struct fcft_font *font = render->font;
 
-    if (render->conf->cursor == CURSOR_BAR) {
-        /* Bar cursor */
-        const int height = min(font->ascent + font->descent, render->row_height);
+    static bool cursor_state = true;
+    static struct timespec last_blink;
+    struct timespec now;
+    clock_gettime(CLOCK_MONOTONIC, &now);
+    if (render->conf->blink_cursor_ms > 0 && now.tv_sec*1000000000+now.tv_nsec - (last_blink.tv_sec*1000000000+last_blink.tv_nsec) >= render->conf->blink_cursor_ms*1000000) {
+        cursor_state = !cursor_state;
+        clock_gettime(CLOCK_MONOTONIC, &last_blink);
+    }
 
-        pixman_image_fill_rectangles(
-            PIXMAN_OP_SRC, pix, &render->pix_input_color,
-            1, &(pixman_rectangle16_t){
-                x,
-                baseline + render->font->descent - height,
-                font->underline.thickness,
-                height});
-    } else {
-        pixman_image_fill_rectangles(
-            PIXMAN_OP_SRC, pix, &render->pix_input_color,
-            1, &(pixman_rectangle16_t){
-                x, baseline - font->underline.position,
-                font->max_advance.x,
-                font->underline.thickness});
+    if (cursor_state) {
+        if (render->conf->cursor == CURSOR_BAR) {
+                /* Bar cursor */
+                const int height = min(font->ascent + font->descent, render->row_height);
+
+                pixman_image_fill_rectangles(
+                    PIXMAN_OP_SRC, pix, &render->pix_input_color,
+                    1, &(pixman_rectangle16_t){
+                        x,
+                        baseline + render->font->descent - height,
+                        font->underline.thickness,
+                        height});
+            } else {
+                // Underline cursor
+                pixman_image_fill_rectangles(
+                    PIXMAN_OP_SRC, pix, &render->pix_input_color,
+                    1, &(pixman_rectangle16_t){
+                        x, baseline - font->underline.position,
+                        font->max_advance.x,
+                        font->underline.thickness});
+            }
     }
 }
 

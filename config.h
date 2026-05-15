@@ -133,6 +133,7 @@ struct config {
     bool prompt_only;
     enum match_fields match_fields;
     enum cursor cursor;
+    uint16_t blink_cursor_ms;
 
     char *namespace;
 
