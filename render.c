@@ -121,6 +121,9 @@ struct render {
     mtx_t *icon_lock;
 };
 
+bool cursor_state = true;
+struct timespec last_blink;
+
 static pixman_color_t
 rgba2pixman(bool gamma_correct, struct rgba rgba)
 {
@@ -431,13 +434,17 @@ render_match_count(const struct render *render, struct buffer *buf,
     return width;
 }
 
+void
+pause_blink() {
+    cursor_state = true;
+    clock_gettime(CLOCK_MONOTONIC, &last_blink);
+}
+
 static void
 render_cursor(const struct render *render, int x, int baseline, pixman_image_t *pix)
 {
     struct fcft_font *font = render->font;
 
-    static bool cursor_state = true;
-    static struct timespec last_blink;
     struct timespec now;
     clock_gettime(CLOCK_MONOTONIC, &now);
     if (render->conf->blink_cursor_ms > 0 && now.tv_sec*1000000000+now.tv_nsec - (last_blink.tv_sec*1000000000+last_blink.tv_nsec) >= render->conf->blink_cursor_ms*1000000) {

@@ -29,6 +29,8 @@ void render_background(const struct render *render, struct buffer *buf);
 
 void render_message(struct render *render, struct buffer *buf);
 
+void pause_blink();
+
 void render_prompt(
     struct render *render, struct buffer *buf,
     const struct prompt *prompt, const struct matches *matches);

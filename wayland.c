@@ -677,6 +677,7 @@ execute_selected(struct seat *seat, bool as_is, int custom_success_exit_code)
 static bool
 execute_binding(struct seat *seat, const struct key_binding *binding, bool *refresh)
 {
+    pause_blink();
     const enum bind_action action = binding->action;
     struct wayland *wayl = seat->wayl;
 
@@ -1057,6 +1058,8 @@ keyboard_key(void *data, struct wl_keyboard *wl_keyboard, uint32_t serial,
         return;
 
     prompt_insert_chars(wayl->prompt, buf, count);
+
+    pause_blink();
 
     matches_update_incremental(wayl->matches);
     matches_selected_set(wayl->matches, 0);
